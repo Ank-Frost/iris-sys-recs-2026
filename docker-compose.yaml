@@ -1,0 +1,30 @@
+version: '3.8' #version of docker
+
+services: # the roster of every conatiner that needs to run for the app
+    mysqldb:
+        image: mysql:oraclelinux9
+        container_name: "mysqldb"
+        #restart: always
+        environment:
+            - MYSQL_ROOT_PASSWORD=p4444 
+            - MYSQL_DATABASE=iris_systems_rec_task_development
+        healthcheck:
+            test: ["CMD","mysqladmin","ping","-h","localhost"]
+            timeout: 30s
+            retries: 5
+
+    web:
+        build: ./ #importing build from dockerfile
+        container_name: myrails_app
+        depends_on:
+            mysqldb:
+                condition: service_healthy
+        ports:
+            - "8080:8080"
+        # environment: rails doesnt read this auto useless here
+        #     - MYSQL_ROOT_PASSWORD= p4444 
+        #     - MYSQL_DATABASE= Rails_app
+
+
+
+            

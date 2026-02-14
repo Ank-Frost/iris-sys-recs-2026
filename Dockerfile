@@ -23,7 +23,9 @@ COPY . .
 #6 we need a port to interact with hit from out side or it will be closed no connection nothing
 EXPOSE 8080
 # port 8080 of the container it has its own network stack and ports etc
+RUN chmod +x ./entrypoint.sh
 
+ENTRYPOINT [ "./entrypoint.sh" ]
 #7 what container should do after all this setup or just exit(ie run the rails server)
 CMD ["rails","server","-b","0.0.0.0","-p","8080"]
 
