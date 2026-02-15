@@ -5,25 +5,63 @@ services: # the roster of every conatiner that needs to run for the app
         image: mysql:oraclelinux9
         container_name: "mysqldb"
         #restart: always
+        volumes:
+            - ./db_data:/var/lib/mysql
+             # - ./host_path:/container_path
         environment:
             - MYSQL_ROOT_PASSWORD=p4444 
             - MYSQL_DATABASE=iris_systems_rec_task_development
         healthcheck:
             test: ["CMD","mysqladmin","ping","-h","localhost"]
-            timeout: 30s
+            timeout: 10s
             retries: 5
-
-    web:
+    web1:
         build: ./ #importing build from dockerfile
-        container_name: myrails_app
+        container_name: myrails_app_01
         depends_on:
             mysqldb:
                 condition: service_healthy
+        healthcheck:
+            test: ["CMD", "wget","--spider" ,"-q", "http://localhost:8080"] 
+            timeout: 10s
+            retries: 5
+        
+    web2:
+        build: ./ #importing build from dockerfile
+        container_name: myrails_app_02
+        depends_on:
+            mysqldb:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "wget","--spider" ,"-q", "http://localhost:8080"]
+            timeout: 10s
+            retries: 5
+        
+    web3:
+        build: ./ #importing build from dockerfile
+        container_name: myrails_app_03
+        depends_on:
+            mysqldb:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "wget","--spider" ,"-q", "http://localhost:8080"]
+            timeout: 10s
+            retries: 5
+       
+    nginx:
+        image: nginx:1.29.5
+        volumes: # importing the conf file to the container
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
         ports:
-            - "8080:8080"
-        # environment: rails doesnt read this auto useless here
-        #     - MYSQL_ROOT_PASSWORD= p4444 
-        #     - MYSQL_DATABASE= Rails_app
+            - 8080:80
+        depends_on:
+            web1:
+                condition: service_healthy
+            web2:
+                condition: service_healthy
+            web3:
+                condition: service_healthy
+        
 
 
 
