@@ -49,15 +49,38 @@ Created docker-compose.yml defining two services:
 * Image: mysql:8.0  
 * Authentication: Enabled mysql\_native\_password plugin to ensure compatibility with Rails.  
 
+* **Database Connection:** \- Modified config/database.yml to switch from local socket connection to TCP/IP.  
+  * Set host: mysqldb in database.yml to match the MySQL service name defined in docker-compose.yaml.  
+  * Corrected password mismatch in docker-compose.yaml (removed accidental whitespace in MYSQL\_ROOT\_PASSWORD).
+
+**Automating Setup (Entrypoint Script)**
+
+* **Script Creation:** Created entrypoint.sh to handle pre-startup tasks:  
+  1. Removes stale server PIDs (rm \-f /rails\_app/tmp/pids/server.pid).  
+  2. Runs database migrations automatically (bin/rails db:migrate).  
+  3. Executes the container's main process (exec "$@").  
+* **Dockerfile Updates:**  
+  * Added COPY instruction for the script.  
+  * Added RUN chmod \+x entrypoint.sh to ensure execution permissions.  
+  * Set ENTRYPOINT \["./entrypoint.sh"\] to run the script on container start.
+
+![alt text](images/no_default_db.png)
+
+![alt text](images/mysql_confg_before.png)
+![alt text](images/mysql_config_change.png)
+
+* fixed the migration error 
+
+
 **Service: web (Rails App)**
 
 * Build Context: Current directory (.) from Dockerfile
 * Dependency: configured depends\_on: db to ensure DB starts first.  
 * mysql server is only exposed to app and cannot be accessed from out side. 
 
-![alt text](<images/db_migration error.png>)
 
-        image of screen
+
+![alt IRIS_RAILS_APP ](images/iris_dash.png)
 
 ## **Task 4,5,6 : Full Rails-db-nginx Setup**
 
@@ -94,9 +117,13 @@ Created docker-compose.yml defining 3 services:
 
   * Updated nginx service to depends\_on web services with condition: service\_healthy to ensure upstreams are up  before Nginx startup.
 
+  * Removed ports mapping from Rails services to isolate them from the host network (internal access only).
+
 ## **Nginx Configuration (nginx.conf)**
 
 * **Upstream Port:** Updated upstream rails\_app block to point to port 8080 (matching the Rails container listen port) instead of default 3000\.  
+
+
 
 * **Proxy Headers:** Modified location / block to include proxy\_set\_header Host $http\_host;. To ensures the port number is passed to the Rails application, preventing redirects to 0.0.0.0 (port 80\) which caused 404 errors.
 
@@ -107,7 +134,8 @@ Created docker-compose.yml defining 3 services:
   * Created prometheus/prometheus.yml configuration file defining a scrape job for localhost:9090.  
   * Added prometheus service to docker-compose.yaml, mapping the configuration file and exposing port 9090\.  
 
-        image of prometheus dash
+![        image of prometheus dash](images/prometheus_dash.png)
+
 * **Grafana Setup:**  
   * Added grafana service to docker-compose.yaml on port 3001 (mapped to internal 3000).  
   * Configured Data Source in Grafana UI:  
@@ -115,4 +143,4 @@ Created docker-compose.yml defining 3 services:
     * URL: http://prometheus:9090 (using Docker service name for DNS resolution).  
   * Verified connectivity by querying prometheus\_http\_requests\_total.
 
-        image of graphan dashboard
+![        image of graphan dashboard](images/graphana_dash.png)
