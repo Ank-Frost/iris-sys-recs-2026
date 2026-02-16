@@ -40,7 +40,7 @@ Created a Dockerfile with the following layers :
 **Objective:**  setup the application and a MySQL database.
 
 
-### **Docker Compose Configuration**
+### **1\. Docker Compose Configuration**
 
 Created docker-compose.yml defining two services:
 
@@ -53,7 +53,7 @@ Created docker-compose.yml defining two services:
   * Set host: mysqldb in database.yml to match the MySQL service name defined in docker-compose.yaml.  
   * Corrected password mismatch in docker-compose.yaml (removed accidental whitespace in MYSQL\_ROOT\_PASSWORD).
 
-**Automating Setup (Entrypoint Script)**
+**2\. Automating Setup (Entrypoint Script)**
 
 * **Script Creation:** Created entrypoint.sh to handle pre-startup tasks:  
   1. Removes stale server PIDs (rm \-f /rails\_app/tmp/pids/server.pid).  
@@ -84,7 +84,7 @@ Created docker-compose.yml defining two services:
 
 ## **Task 4,5,6 : Full Rails-db-nginx Setup**
 
-Created docker-compose.yml defining 3 services:
+### **1\. Created docker-compose.yml defining 3 services**
 
 **Service: db (MySQL)**
 
@@ -119,7 +119,7 @@ Created docker-compose.yml defining 3 services:
 
   * Removed ports mapping from Rails services to isolate them from the host network (internal access only).
 
-## **Nginx Configuration (nginx.conf)**
+### **Nginx Configuration (nginx.conf)**
 
 * **Upstream Port:** Updated upstream rails\_app block to point to port 8080 (matching the Rails container listen port) instead of default 3000\.  
 
@@ -128,7 +128,7 @@ Created docker-compose.yml defining 3 services:
 * **Proxy Headers:** Modified location / block to include proxy\_set\_header Host $http\_host;. To ensures the port number is passed to the Rails application, preventing redirects to 0.0.0.0 (port 80\) which caused 404 errors.
 
 ![alt text](images/nginx_404.png)
-## **Monitoring** 
+## **Task 8 : Monitoring** 
 
 * **Prometheus Setup:**  
   * Created prometheus/prometheus.yml configuration file defining a scrape job for localhost:9090.  
