@@ -1,6 +1,6 @@
 # Iris-sys-recs-2026
 
-## **Task 1: Containerize Rails Application**
+## [**Task 1: Containerize Rails Application**](https://github.com/Ank-Frost/iris-sys-recs-2026/tree/task1)
 
 **Objective:** Create a Docker image for the Ruby on Rails application to ensure portability and consistent execution environments.
 
@@ -35,7 +35,7 @@ Created a Dockerfile with the following layers :
 
 ![alt text](images/no_db.png)
 
-## **Task 2: MySql Databse Setup**
+## **[Task 2](https://github.com/Ank-Frost/iris-sys-recs-2026/tree/task-2): MySql Databse Setup**
 
 **Objective:**  setup the application and a MySQL database.
 
@@ -82,7 +82,7 @@ Created docker-compose.yml defining two services:
 
 ![alt IRIS_RAILS_APP ](images/iris_dash.png)
 
-## **Task 4,5,6 : Full Rails-db-nginx Setup**
+## **[Task 4,5,6](https://github.com/Ank-Frost/iris-sys-recs-2026/tree/task4%2C5%2C6) : Full Rails-db-nginx Setup**
 
 ### **1\. Created docker-compose.yml defining 3 services**
 
@@ -128,7 +128,7 @@ Created docker-compose.yml defining two services:
 * **Proxy Headers:** Modified location / block to include proxy\_set\_header Host $http\_host;. To ensures the port number is passed to the Rails application, preventing redirects to 0.0.0.0 (port 80\) which caused 404 errors.
 
 ![alt text](images/nginx_404.png)
-## **Task 8 : Monitoring** 
+## **[Task 8](https://github.com/Ank-Frost/iris-sys-recs-2026/tree/task8a%2Cb) : Monitoring** 
 
 * **Prometheus Setup:**  
   * Created prometheus/prometheus.yml configuration file defining a scrape job for localhost:9090.  
